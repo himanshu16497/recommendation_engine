@@ -1,15 +1,18 @@
 from flask import Flask,render_template,request
 from image_based_recommendation_api_1 import bottlebeck_features
 from image_based_recommendation_api_2 import the_urls
+from image_based_recommendation_api_3 import image_hirarchy
 from text_based_recommendation_api_1 import image_urls
-import numpy as np
+#import numpy as np
 import os
+
 app=Flask(__name__, template_folder= "C:\\Python35\\templates")
 app.config['TEMPLATES_AUTO_RELOAD']=True
 app.config['UPLOAD_FOLDER']=("C:\\Python35\\image\\subfolder\\")
 
 @app.route('/')
 def hello():
+    #return(app.template_folder)
     return render_template('front_end.html')
 @app.route('/result',methods = ['POST', 'GET'])
 def hello1():
@@ -36,13 +39,14 @@ def image_rec():
             file.save(path)
             file.close()
             vector=bottlebeck_features(path)
+            img_hir=image_hirarchy(vector)
             print("yes")
             #os.chmod(path, 0o777)
             #os.remove(path)
             #np.save("C:\\Python35\\Upload_folder\\user_img.npy",vector)
             #return(path)
             os.remove(path)
-            url_list=the_urls(vector)
+            url_list=the_urls(vector,img_hir)
             print(url_list)
             return render_template('fron_end2.html',url_list=url_list)
             #return (path)
